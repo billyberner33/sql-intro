@@ -2,6 +2,26 @@
 -- NOTE: need more advanced SQL to answer this question without
 --       raising a warning: "Field of aggregated query neither grouped nor aggregated"
 
+WITH TeamHomeRunLeaders AS (
+    SELECT 
+        stats.team_id,
+        stats.player_id,
+        MAX(stats.home_runs) AS max_home_runs
+    FROM stats
+    INNER JOIN teams ON stats.team_id = teams.id
+    WHERE teams.year = 2019
+    GROUP BY stats.team_id
+)
+SELECT 
+    teams.name AS team_name,
+    players.first_name,
+    players.last_name,
+    TeamHomeRunLeaders.max_home_runs
+FROM TeamHomeRunLeaders
+INNER JOIN players ON TeamHomeRunLeaders.player_id = players.id
+INNER JOIN teams ON TeamHomeRunLeaders.team_id = teams.id
+ORDER BY teams.name;
+
 -- Expected result:
 --
 -- +-------------------------------+------------+-------------+----------------------+
